@@ -6,13 +6,24 @@ const { scrapeAmbito, scrapeDolarHoy, scrapeCronista } = require('./ars-scrapers
  */
 async function scrapeAllBRL() {
   const results = [];
-  const scrapers = [
-    { name: 'Wise', fn: scrapeWise },
-    { name: 'Nubank', fn: scrapeNubank },
-    { name: 'Nomad', fn: scrapeNomad }
+  
+  // First, get the base rate from Wise
+  let wiseData = null;
+  try {
+    wiseData = await scrapeWise();
+    results.push(wiseData);
+    console.log('Successfully scraped Wise');
+  } catch (error) {
+    console.error('Failed to scrape Wise:', error.message);
+  }
+  
+  // Nubank and Nomad will use simulated rates if Wise succeeded
+  const otherScrapers = [
+    { name: 'Nubank', fn: () => scrapeNubank(wiseData) },
+    { name: 'Nomad', fn: () => scrapeNomad(wiseData) }
   ];
 
-  for (const scraper of scrapers) {
+  for (const scraper of otherScrapers) {
     try {
       const data = await scraper.fn();
       results.push(data);
