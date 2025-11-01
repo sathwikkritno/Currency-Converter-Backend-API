@@ -274,6 +274,31 @@ curl http://localhost:3000/slippage?currency=BRL
 - **Cheerio** - HTML parsing
 - **dotenv** - Environment configuration
 
+## Troubleshooting
+
+### npm warn config production
+
+If you see `npm warn config production Use '--omit=dev' instead` during deployment, this is a harmless informational warning from newer npm versions. It doesn't affect functionality.
+
+### MySQL Connection Issues
+
+- Ensure MySQL service is running
+- Verify credentials in `.env` match your database
+- Check that the database exists (it will be auto-created by the app)
+
+### Only 1 or 2 Sources Returning Data
+
+Some websites may block scrapers or change their HTML structure. The API is designed to work with partial data:
+- BRL sources: Wise (primary), Nubank & Nomad (simulated rates)
+- ARS sources: Ambito, DolarHoy, Cronista
+
+### Port Already in Use
+
+If port 3000 is busy, change `PORT` in your `.env` file:
+```env
+PORT=3001
+```
+
 ## License
 
 ISC
